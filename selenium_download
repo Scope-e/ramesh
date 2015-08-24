@@ -1,0 +1,7 @@
+profile = webdriver.FirefoxProfile()
+profile.set_preference('browser.download.folderList', 2) # custom location
+profile.set_preference('browser.download.manager.showWhenStarting', False)
+profile.set_preference('browser.download.dir', 'C:\Users\trainee_rameshk\Desktop\sukumar')
+profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/pdf')
+
+browser = webdriver.Firefox(profile)
