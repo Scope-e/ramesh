@@ -1,0 +1,62 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
+import time
+from selenium import*
+from glob import glob
+import os
+start_time = time.time()
+profile = webdriver.FirefoxProfile()
+profile.set_preference('browser.download.folderList', 2) # custom location
+profile.set_preference('browser.download.manager.showWhenStarting', False)
+profile.set_preference('browser.download.dir', 'C:\Users\trainee_rameshk\Documents\from sugumar')
+profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/pdf')
+
+browser = webdriver.Firefox(profile)
+
+with open("ids.txt", "r") as f:
+    process_time = time.time() - start_time
+    
+    print "Process start time:%s seconds"%(process_time)
+    for line in f:
+        ids=line
+
+        k=str(ids)
+        k= k[:len(k)-1]
+        
+        
+        url="https://www.efast.dol.gov/portal/app/disseminate?execution=e1s1"
+        browser.get(url)
+
+        form = browser.find_element_by_xpath(".//*[@id='ackId']")
+        form.send_keys(k)
+     
+        browser.find_element_by_xpath(".//*[@id='form:nextbtn']").click()
+        time.sleep(15)
+
+        browser.find_element_by_xpath(".//*[@id='form:filingTreeTable:0:einLnk']").click()
+        time.sleep(15)
+
+        while os.path.isfile('filing.pdf.part')==True:
+            time.sleep(10)
+        time.sleep(5)
+    
+        os.rename('filing.pdf',k)
+        print "Pdf downloaded time is %s seconds"% (time.time() - process_time)
+    
+
+print "process completed"
+
+
+
+
+
+
+
+
+
+
+
+
+
