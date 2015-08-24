@@ -1,0 +1,27 @@
+from pyquery import PyQuery as pq
+import requests
+
+
+html = requests.get("http://www.sullcrom.com/professionals-search-results?firstlastname=&lastname=&position=0&practice=0&school=0&keyword=&office=0&clerkship=0&language=0&Mfirstlastname=&Mlastname=&Mkeyword=&Mposition=0&Moffice=0&Mpractice=0&Mschool=0&Mclerkship=0&Mlanguage=0&btn_profSrch_desktop=find+lawyers")
+
+
+doc = pq(html.text)
+
+r = doc(".row")
+
+for my_div in r:
+    q = pq(my_div)
+
+    value = q(".title").text()
+    print value
+    print pq(my_div)(".col-2 span").text()
+
+
+for my_div in r:
+    print pq(my_div)(".title").text()
+    print pq(my_div)(".col-2 span").text()
+
+
+
+
+
