@@ -1,0 +1,109 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
+import time
+import pyodbc
+from datetime import datetime
+
+
+
+
+url = "https://www4.j-platpat.inpit.go.jp/eng/tokujitsu/tkbs_en/TKBS_EN_GM101_Top.action"
+
+
+
+with open("ids.txt", "r") as f:
+  for line in f:
+
+    k = str(line)
+    time.sleep(10)
+
+    browser = webdriver.Firefox()
+    browser.get(url)
+
+    start_time = str(datetime.now())
+
+
+    form = browser.find_element_by_xpath(".//*[@id='bunkenBango1']")
+    form.send_keys(k)
+
+    browser.find_element_by_xpath(".//*[@id='button_searchresult']").click()
+    time.sleep(5)
+
+    browser.find_element_by_xpath(".//*[@id='unexPubLink0']").click()
+    time.sleep(5)
+
+    browser.find_element_by_id("abstruct2").click()
+    time.sleep(20)
+
+
+    qs = browser.find_elements_by_class_name("grid-7")
+
+    q = qs[1].text
+    
+    time.sleep(5)
+#    print "*******************************************************"
+#    print k
+    q = q.replace("'", "\\'")
+    q = q.replace("  "," ")
+    k = q.find("[Explanations of letters or numerals]")
+    t = q[k:]
+    if len(t) == 1:
+      t = ""
+      
+
+    ack_id = line
+    time_start = "%sseconds"%start_time
+    time_end = "%sseconds"%str(datetime.now())
+    curr_url = browser.current_url
+
+
+
+    print ack_id
+    print t
+    print time_start
+    print time_end
+    print curr_url
+######===================SQLITE===============================    
+####
+####    conn = sqlite3.connect('test.db')
+####    conn.execute('INSERT INTO JAP (ID, DESCRIPTION, URL, START_TIMe, END_TIME) \
+####          VALUES (%s, "%s", "%s", "%s", "%s")'%(line,t,curr_url,time_start,time_end));
+####    conn.commit()
+####    print "Records created successfully";
+####    conn.close()
+
+##====================ODBC==================================
+    cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER={172.16.5.95};DATABASE=JPAT_DB_Test;UID=sa;PWD=sa@123')
+    cursor = cnxn.cursor()
+
+#    cursor.execute('INSERT INTO Jap_hmat (Search_input_id, Abstract, Ref_url, start_time, end_time) \
+#          VALUES (%s, %s, %s, %s, %s)'%(line,t,curr_url,time_start,time_end));
+
+
+    cursor.execute("INSERT INTO Jap_hmat (Search_input_id, Abstract, Ref_url, start_time, end_time) \
+           VALUES ('%s', '%s', '%s', '%s', '%s')"%(line,t,curr_url,time_start,time_end));
+   
+    cnxn.commit()
+    print cursor.execute
+    cnxn.close()
+
+    
+    browser.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
