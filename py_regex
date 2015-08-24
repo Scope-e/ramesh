@@ -1,0 +1,26 @@
+from bs4 import BeautifulSoup
+import re
+import requests
+
+url = raw_input("Enter a website to extract the URL's from: ")
+inputs = raw_input("Enter Regex: ")
+
+regex = '%s'%inputs
+pattern1 = '('
+rep1 = re.findall(re.escape(pattern1), regex)
+
+n= len(rep1)
+
+r  = requests.get(url)
+data = r.text
+soup = BeautifulSoup(data)
+
+datas = re.findall(regex, data)
+
+for i in datas:
+   f=""
+   for j in range(0,n):
+      f = f + "\t" + i[j]
+   print f
+
+
