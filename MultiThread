@@ -1,0 +1,53 @@
+import threading
+import Queue
+import time, random
+
+import requests
+
+WORKERS = 392
+
+s = []
+
+with open("file.txt", "r") as ins:
+    array = []
+    for line in ins:
+        array.append(line)
+s = array
+
+
+
+
+class Worker(threading.Thread):
+
+    def __init__(self, queue):
+        self.__queue = queue
+        threading.Thread.__init__(self)
+
+    def run(self):
+        while 1:
+            
+            item = self.__queue.get()
+
+            item = item.split("|")
+            print item[0]
+            print item[1]
+            print "%s\n"%(item[2])
+            time.sleep(5)
+            r = requests.get(item[1].strip(),item[2].strip())
+            
+            files = open('%s.html'%(item[0]),'w+')
+            h = r.text
+            files.write(h.encode('utf-8'))
+            print 
+            print "task", item, "finished"
+
+
+queue = Queue.Queue(0)
+for i in range(WORKERS):
+    Worker(queue).start() # start a worker
+
+for i in s:
+    queue.put(i)
+
+for i in range(WORKERS):
+    queue.put(None) # add end-of-queue markers
