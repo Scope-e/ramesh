@@ -8,7 +8,6 @@ WORKERS = 392
 
 s = []
 
-
 with open("file.txt", "r") as ins:
     array = []
     for line in ins:
