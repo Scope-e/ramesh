@@ -22,5 +22,4 @@ for i in datas:
    for j in range(0,n):
       f = f + "\t" + i[j]
    print f
-
-
+ramesh
